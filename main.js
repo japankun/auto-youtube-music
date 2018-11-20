@@ -8,6 +8,7 @@ const wget = require('node-wget')
 const unzip = require('unzip')
 
 const setting = require('./setting.json')
+const platform = process.platform
 
 let youtubedlUrl = setting.youtubedlExe
 let youtubedl = "youtube-dl.exe"
@@ -16,7 +17,7 @@ let ffmpeg = "ffmpeg.exe"
 let ffprobe = "ffprobe.exe"
 
 
-if (process.platform === "linux") {
+if (platform === "linux") {
     youtubedlUrl = setting.youtubedlLinux
     youtubedl = "youtube-dl"
     ffmpeg = "ffmpeg"
