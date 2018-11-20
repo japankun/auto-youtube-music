@@ -8,20 +8,21 @@ const wget = require('node-wget')
 const unzip = require('unzip')
 
 const setting = require('./setting.json')
-const platform = process.platform
+const isWindows = (process.platform === 'win32');
 
-let youtubedlUrl = setting.youtubedlExe
-let youtubedl = "youtube-dl.exe"
-let ffmepgUrl = setting.ffmpegExe
-let ffmpeg = "ffmpeg.exe"
-let ffprobe = "ffprobe.exe"
+if (isWindows) {
+    const youtubedlUrl = setting.youtubedlExe
+    const youtubedl = "youtube-dl.exe"
+    const ffmepgUrl = setting.ffmpegExe
+    const ffmpeg = "ffmpeg.exe"
+    const ffprobe = "ffprobe.exe"
 
-
-if (platform === "linux") {
-    youtubedlUrl = setting.youtubedlLinux
-    youtubedl = "youtube-dl"
-    ffmpeg = "ffmpeg"
-    ffprobe = "ffprobe"
+} else {
+    const youtubedlUrl = setting.youtubedlLinux
+    const youtubedl = "youtube-dl"
+    const ffmpeg = "ffmpeg"
+    const ffprobe = "ffprobe"
+    
 }
 
 let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false};
