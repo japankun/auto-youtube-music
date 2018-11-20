@@ -10,19 +10,28 @@ const unzip = require('unzip')
 const setting = require('./setting.json')
 const isWindows = (process.platform === 'win32');
 
+let lib = 
+{
+    'youtubedlUrl': "",
+    'youtubedl': "",
+    'ffmpegUrl': "",
+    'ffmpeg': "",
+    'ffprobe': ""
+}
+
 if (isWindows) {
-    const youtubedlUrl = setting.youtubedlExe
-    const youtubedl = "youtube-dl.exe"
-    const ffmepgUrl = setting.ffmpegExe
-    const ffmpeg = "ffmpeg.exe"
-    const ffprobe = "ffprobe.exe"
+    lib.youtubedlUrl = setting.youtubedlExe
+    lib.youtubedl = "youtube-dl.exe"
+    lib.ffmepgUrl = setting.ffmpegExe
+    lib.ffmpeg = "ffmpeg.exe"
+    lib.ffprobe = "ffprobe.exe"
 
 } else {
-    const youtubedlUrl = setting.youtubedlLinux
-    const youtubedl = "youtube-dl"
-    const ffmpeg = "ffmpeg"
-    const ffprobe = "ffprobe"
-    
+    lib.youtubedlUrl = setting.youtubedlLinux
+    lib.youtubedl = "youtube-dl"
+    lib.ffmpeg = "ffmpeg"
+    lib.ffprobe = "ffprobe"
+
 }
 
 let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false};
@@ -99,24 +108,24 @@ function downloadFFmpeg () {
 
 function updateCheck () {
 
-    msg('Checking ' + youtubedl + ' ...')
+    msg('Checking ' + lib.youtubedl + ' ...')
 
-    if (!isExistsFile(youtubedl)) {
+    if (!isExistsFile(lib.youtubedl)) {
         msg('Missing youtube-dl', 'yellow')
-        msg('Downloading ' + youtubedl + ' ...', 'blue')
-        wget({url:youtubedlUrl, dest: './lib/'})
+        msg('Downloading ' + lib.youtubedl + ' ...', 'blue')
+        wget({"url":lib.youtubedlUrl, "dest": './lib/'})
 
     } else {
-        msg('Found ' + youtubedl)
-        msg('Checking update ' + youtubedl + ' ...', 'yellow')
+        msg('Found ' + lib.youtubedl)
+        msg('Checking update ' + lib.youtubedl + ' ...', 'yellow')
 
         let date = new Date()
 
-        if (parseInt(fs.statSync('./lib/' + youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-(2*24*60*60)) {
-            msg(youtubedl + ' is Too old. try update ' + youtubedl + ' ...', 'yellow')
-            wget({url:youtubedlUrl, dest: './lib/'})
+        if (parseInt(fs.statSync('./lib/' + lib.youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-(2*24*60*60)) {
+            msg(lib.youtubedl + ' is Too old. try update ' + lib.youtubedl + ' ...', 'yellow')
+            wget({"url": lib.youtubedlUrl, "dest": './lib/'})
         } else {
-            msg(youtubedl + ' is Fresh. using library ...', 'yellow')
+            msg(lib.youtubedl + ' is Fresh. using library ...', 'yellow')
         }
 
         return;
@@ -127,15 +136,15 @@ function updateCheck () {
         return;
     }
 
-    if (!isExistsFile(ffmpeg) || !isExistsFile(ffprobe)) {
-        msg('Not found ' + ffmpeg + ' or ' + ffprobe, 'yellow')
-        msg('Downloading ' + ffmpeg + ' package ...', 'blue')
+    if (!isExistsFile(lib.ffmpeg) || !isExistsFile(lib.ffprobe)) {
+        msg('Not found ' + lib.fmpeg + ' or ' + lib.ffprobe, 'yellow')
+        msg('Downloading ' + lib.ffmpeg + ' package ...', 'blue')
 
-        wget({url:ffmepgUrl, dest: './lib/'}, downloadFFmpeg)
+        wget({"ur": lib.ffmepgUrl, "dest": './lib/'}, downloadFFmpeg)
         downloadFFmpeg()
 
     } else {
-        msg('Found ' + ffmpeg + ' & ' + ffprobe)
+        msg('Found ' + lib.ffmpeg + ' & ' + lib.ffprobe)
     }
 
     return;
@@ -168,7 +177,7 @@ function download () {
 
     downloadOptions.push(playlist)
 
-    let proc = childProcess.spawn(youtubedl, downloadOptions,
+    let proc = childProcess.spawn(lib.youtubedl, downloadOptions,
         { cwd: __dirname + '/lib', stdio: 'inherit'}
     )
 
