@@ -20,14 +20,14 @@ let lib =
 }
 
 if (isWindows) {
-    lib.youtubedlUrl = setting.youtubedlExe
+    lib.youtubedlUrl = setting.youtubedlExe.toString()
     lib.youtubedl = "youtube-dl.exe"
     lib.ffmepgUrl = setting.ffmpegExe
     lib.ffmpeg = "ffmpeg.exe"
     lib.ffprobe = "ffprobe.exe"
 
 } else {
-    lib.youtubedlUrl = setting.youtubedlLinux
+    lib.youtubedlUrl = setting.youtubedlLinux.toString()
     lib.youtubedl = "youtube-dl"
     lib.ffmpeg = "ffmpeg"
     lib.ffprobe = "ffprobe"
