@@ -1,4 +1,9 @@
+dist: xenial
 language: node_js
 node_js:
   - "node"
   - "8"
+addons:
+  apt:
+    packages:
+    - ffmpeg
