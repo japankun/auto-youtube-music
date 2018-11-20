@@ -7,7 +7,6 @@
     "lib": "lib"
   },
   "dependencies": {
-    "is-url": "^1.2.4",
     "unzip": "^0.1.11",
     "node-wget": "^0.4.3"
   },
