@@ -1,0 +1,28 @@
+{
+  "name": "auto-youtube-music",
+  "version": "1.0.0",
+  "description": "easy youtube download tool",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "is-url": "^1.2.4",
+    "unzip": "^0.1.11",
+    "node-wget": "^0.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "japan-kun",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/japankun/auto-youtube-music.git"
+  },
+  "bugs": {
+    "url": "https://github.com/japankun/auto-youtube-music/issues"
+  },
+  "homepage": "https://github.com/japankun/auto-youtube-music#readme"
+}
