@@ -4,12 +4,10 @@
 const fs = require('fs')
 const childProcess = require('child_process')
 const path = require('path')
-const isurl = require('is-url')
 const wget = require('node-wget')
 const unzip = require('unzip')
 
 const setting = require('./setting.json')
-console.log(process.platform)
 
 let youtubedlUrl = setting.youtubedlExe
 let youtubedl = "youtube-dl.exe"
@@ -37,7 +35,7 @@ let modifyOptions = '';
 
     process.argv.forEach(function(url){
 
-        if (isurl(url)) {
+        if (url.substr(0, 4, url == "http")) {
             playlist = url
 
         } else if (url == "-h") {
