@@ -9,16 +9,27 @@ const wget = require('node-wget')
 const unzip = require('unzip')
 
 const setting = require('./setting.json')
-const youtubedl = setting.youtubedlExe
-const ffmepg = setting.ffmpegExe
+console.log(process.platform)
+
+let youtubedlUrl = setting.youtubedlExe
+let youtubedl = "youtube-dl.exe"
+let ffmepgUrl = setting.ffmpegExe
+let ffmpeg = "ffmpeg.exe"
+let ffprobe = "ffprobe.exe"
+
+
+if (process.platform === "linux") {
+    youtubedlUrl = setting.youtubedlLinux
+    youtubedl = "youtube-dl"
+    ffmpeg = "ffmpeg"
+    ffprobe = "ffprobe"
+}
 
 let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false};
 let playlist = false;
 let modifyOptions = '';
 
 (function(){
-
-    console.log(process.argv);
 
     console.log('\u001b[36m******************************************************************\u001b[0m\n'+
         ' \u001b[41m \> \u001b[0m Auto You\u001b[41mTube\u001b[0m Music Downloader\n'+
@@ -88,24 +99,24 @@ function downloadFFmpeg () {
 
 function updateCheck () {
 
-    msg('Checking youtube-dl.exe ...')
+    msg('Checking ' + youtubedl + ' ...')
 
-    if (!isExistsFile('youtube-dl.exe')) {
-        msg('Missing youtube-dl.exe', 'yellow')
-        msg('Downloading youtube-dl.exe ...', 'blue')
-        wget({url:youtubedl, dest: './lib/'})
+    if (!isExistsFile(youtubedl)) {
+        msg('Missing youtube-dl', 'yellow')
+        msg('Downloading ' + youtubedl + ' ...', 'blue')
+        wget({url:youtubedlUrl, dest: './lib/'})
 
     } else {
-        msg('Found youtube-dl.exe')
-        msg('Checking update youtube-dl.exe ...', 'yellow')
+        msg('Found ' + youtubedl)
+        msg('Checking update ' + youtubedl + ' ...', 'yellow')
 
         let date = new Date()
 
-        if (parseInt(fs.statSync('./lib/youtube-dl.exe').ctimeMs/1000) < parseInt(date.getTime/1000)-(2*24*60*60)) {
-            msg('youtube-dl.exe is Too old. try update youtube-dl.exe ...', 'yellow')
-            wget({url:youtubedl, dest: './lib/'})
+        if (parseInt(fs.statSync('./lib/' + youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-(2*24*60*60)) {
+            msg(youtubedl + ' is Too old. try update ' + youtubedl + ' ...', 'yellow')
+            wget({url:youtubedlUrl, dest: './lib/'})
         } else {
-            msg('youtube-dl.exe is Fresh. using library ...', 'yellow')
+            msg(youtubedl + ' is Fresh. using library ...', 'yellow')
         }
 
         return;
@@ -116,15 +127,15 @@ function updateCheck () {
         return;
     }
 
-    if (!isExistsFile('ffmpeg.exe') || !isExistsFile('ffprobe.exe')) {
-        msg('Not found ffmepg.exe or ffprobe.exe', 'yellow')
-        msg('Downloading ffmpeg package ...', 'blue')
+    if (!isExistsFile(ffmpeg) || !isExistsFile(ffprobe)) {
+        msg('Not found ' + ffmpeg + ' or ' + ffprobe, 'yellow')
+        msg('Downloading ' + ffmpeg + ' package ...', 'blue')
 
-        wget({url:ffmepg, dest: './lib/'}, downloadFFmpeg)
+        wget({url:ffmepgUrl, dest: './lib/'}, downloadFFmpeg)
         downloadFFmpeg()
 
     } else {
-        msg('Found ffmepg & ffprobe.exe')
+        msg('Found ' + ffmpeg + ' & ' + ffprobe)
     }
 
     return;
@@ -157,7 +168,7 @@ function download () {
 
     downloadOptions.push(playlist)
 
-    let proc = childProcess.spawn('youtube-dl.exe', downloadOptions,
+    let proc = childProcess.spawn(youtubedl, downloadOptions,
         { cwd: __dirname + '/lib', stdio: 'inherit'}
     )
 
@@ -181,7 +192,7 @@ function commandlineOptions () {
         },
         {
             name: '-ff',
-            description :'check exists ffmpeg.exe. for youtube-dl uses ffmpeg option',
+            description :'check exists ffmpeg. for youtube-dl uses ffmpeg option',
             example: "'main.js --ff {someYouTubeURL}'"
         },
         {
@@ -191,8 +202,8 @@ function commandlineOptions () {
         }
     ]
 
-    msg("Usage: aym.bat https://www.youtube.com/watch?v=6Olt-ZtV_CE [options]", 'white', false)
-    msg("Usage: aym.bat https://music.youtube.com/playlist?list=OLAK5uy_kaI5BH61jKTr2m6Ys8YuxuCYMNGrdAaEI [options]", 'white', false)
+    msg("Usage: aym.(bat|sh) https://www.youtube.com/watch?v=6Olt-ZtV_CE [options]", 'white', false)
+    msg("Usage: aym.(bat|sh) https://music.youtube.com/playlist?list=OLAK5uy_kaI5BH61jKTr2m6Ys8YuxuCYMNGrdAaEI [options]", 'white', false)
     msg("Options:", 'white', false)
     argv.forEach(function(cmd){
         msg('  '+cmd.name + '\t\t' + cmd.description, 'white', false)
