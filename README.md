@@ -1,6 +1,8 @@
 # Auto Youtube Music
 youtube-dl front end for Specialized YouTube Music.
 
+[![Build Status](https://travis-ci.org/japankun/auto-youtube-music.svg?branch=master)](https://travis-ci.org/japankun/auto-youtube-music)
+
 ## Features
 - Auto Update youtube-dl
 - Enhanced ffmpeg Options [Experimentally]
