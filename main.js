@@ -184,6 +184,11 @@ function download () {
         downloadOptions.push('--no-mtime')
     }
 
+    if (!isWindows && setting.ffmpegPath) {
+        downloadOptions.push("--ffmpeg-location")
+        downloadOptions.push(__dirname +  setting.ffmpegPath)
+    }
+
     downloadOptions.push(playlist)
 
     let proc = childProcess.spawn(__dirname + '/lib/' + lib.youtubedl, downloadOptions,
