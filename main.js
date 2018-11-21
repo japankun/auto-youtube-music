@@ -9,6 +9,7 @@ const unzip = require('unzip')
 
 const setting = require('./setting.json')
 const isWindows = (process.platform === 'win32');
+const youtubedlExpires = 7*24*60*60
 
 let lib = 
 {
@@ -46,7 +47,7 @@ let modifyOptions = '';
 
     process.argv.forEach(function(url){
 
-        if (url.substr(0, 4, url == "http")) {
+        if (url.substr(0, 4, url) === "http") {
             playlist = url
 
         } else if (url == "-h") {
@@ -71,16 +72,20 @@ let modifyOptions = '';
     }
 
     msg('Download URL: ' + playlist);
+    main()
 
-    if (commandOptions.nc && isExistsFile('youtube-dl.exe')){
+})();
+
+function main () {
+
+    if (commandOptions.nc && isExistsFile(lib.youtubedl)){
         msg('Enable Skip UpdateCheck Option ...', 'yellow')
         download()
     } else {
         updateCheck()
-        download()
     }
 
-})();
+}
 
 function downloadFFmpeg () {
 
@@ -91,14 +96,14 @@ function downloadFFmpeg () {
 
     fs.createReadStream('./lib/' + filename).pipe(unzip.Extract({ path: './lib/' }))
 
-    msg('Copying ffmpeg.exe ...')
-    fs.copyFileSync('./lib/' + directory + '/bin/ffmpeg.exe', './lib/ffmpeg.exe')
+    msg('Copying ' + lib.ffmpeg + ' ...')
+    fs.copyFileSync('./lib/' + directory + '/bin/' + lib.ffmpeg, './lib/' + lib.ffmpeg)
 
-    msg('Copying ffprobe.exe ...')
-    fs.copyFileSync('./lib/' + directory + '/bin/ffprobe.exe', './lib/ffprobe.exe')
+    msg('Copying ' + lib.ffprobe + ' ...')
+    fs.copyFileSync('./lib/' + directory + '/bin/' + lib.ffprobe, './lib/' + lib.ffprobe)
 
-    if (isExistsFile('ffprobe.exe') && isExistsFile('ffmpeg.exe')) {
-        msg('Found ffmepg & ffprobe.exe')
+    if (isExistsFile(lib.ffmpeg) && isExistsFile(lib.ffprobe)) {
+        msg('Found ' + lib.ffmpeg + ' & ' + lib.ffprobe)
         download()
     }
 
@@ -111,9 +116,11 @@ function updateCheck () {
     msg('Checking ' + lib.youtubedl + ' ...')
 
     if (!isExistsFile(lib.youtubedl)) {
-        msg('Missing youtube-dl', 'yellow')
+        msg('Missing ' + lib.youtubedl, 'yellow')
         msg('Downloading ' + lib.youtubedl + ' ...', 'blue')
-        wget({"url":lib.youtubedlUrl, "dest": './lib/'})
+        wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
+            setTimeout(download, 1000)
+        })
 
     } else {
         msg('Found ' + lib.youtubedl)
@@ -121,11 +128,14 @@ function updateCheck () {
 
         let date = new Date()
 
-        if (parseInt(fs.statSync('./lib/' + lib.youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-(2*24*60*60)) {
+        if (parseInt(fs.statSync('./lib/' + lib.youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-youtubedlExpires) {
             msg(lib.youtubedl + ' is Too old. try update ' + lib.youtubedl + ' ...', 'yellow')
-            wget({"url": lib.youtubedlUrl, "dest": './lib/'})
+            wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
+                setTimeout(download, 1000)
+            })
         } else {
             msg(lib.youtubedl + ' is Fresh. using library ...', 'yellow')
+            download()
         }
 
         return;
@@ -141,7 +151,6 @@ function updateCheck () {
         msg('Downloading ' + lib.ffmpeg + ' package ...', 'blue')
 
         wget({"ur": lib.ffmepgUrl, "dest": './lib/'}, downloadFFmpeg)
-        downloadFFmpeg()
 
     } else {
         msg('Found ' + lib.ffmpeg + ' & ' + lib.ffprobe)
@@ -211,8 +220,13 @@ function commandlineOptions () {
         }
     ]
 
-    msg("Usage: aym.(bat|sh) https://www.youtube.com/watch?v=6Olt-ZtV_CE [options]", 'white', false)
-    msg("Usage: aym.(bat|sh) https://music.youtube.com/playlist?list=OLAK5uy_kaI5BH61jKTr2m6Ys8YuxuCYMNGrdAaEI [options]", 'white', false)
+    if (isWindows) {
+        msg("Usage: aym.bat https://www.youtube.com/watch?v=6Olt-ZtV_CE [options]", 'white', false)
+        msg("Usage: aym.bat https://music.youtube.com/playlist?list=OLAK5uy_kaI5BH61jKTr2m6Ys8YuxuCYMNGrdAaEI [options]", 'white', false)
+    } else {
+        msg("Usage: aym.sh https://www.youtube.com/watch?v=6Olt-ZtV_CE [options]", 'white', false)
+        msg("Usage: aym.sh https://music.youtube.com/playlist?list=OLAK5uy_kaI5BH61jKTr2m6Ys8YuxuCYMNGrdAaEI [options]", 'white', false)
+    }
     msg("Options:", 'white', false)
     argv.forEach(function(cmd){
         msg('  '+cmd.name + '\t\t' + cmd.description, 'white', false)
@@ -226,8 +240,10 @@ function msg (msg, color=null, head=true) {
 
     let msgHeader = ''
 
-    if (head) {
+    if (!head) {
         msgHeader = '[AYM] '
+    } else {
+        msgHeader = '[AYM]'
     }
 
     const pallet = {
@@ -251,5 +267,5 @@ function msg (msg, color=null, head=true) {
 }
 
 function error (err) {
-    msg('[ERROR] + ' + err, 'red')
+    msg('[ERROR] ' + err, 'red')
 }

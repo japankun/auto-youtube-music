@@ -7,8 +7,9 @@
     "lib": "lib"
   },
   "dependencies": {
-    "unzip": "^0.1.11",
-    "node-wget": "^0.4.3"
+    "node-wget": "^0.4.3",
+    "nvm": "0.0.4",
+    "unzip": "^0.1.11"
   },
   "devDependencies": {},
   "scripts": {
