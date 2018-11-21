@@ -13,4 +13,4 @@ addons:
 before_install:
   - which ffmpeg
 
-script: aym.sh https://www.youtube.com/watch?v=6Olt-ZtV_CE
+script: ./aym.sh https://www.youtube.com/watch?v=6Olt-ZtV_CE
