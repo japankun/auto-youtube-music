@@ -13,7 +13,7 @@ const youtubedlExpires = 7*24*60*60
 
 let lib = 
 {
-    'youtubedlUrl': setting.youtubedlLinux,
+    'youtubedlUrl': setting.ytDlLinux,
     'youtubedl': "youtube-dl",
     'ffmpegUrl': "",
     'ffmpeg': "ffmpeg",
@@ -21,7 +21,7 @@ let lib =
 }
 
 if (isWindows) {
-    lib.youtubedlUrl = setting.youtubedlExe
+    lib.youtubedlUrl = setting.ytDlExe
     lib.youtubedl = "youtube-dl.exe"
     lib.ffmepgUrl = setting.ffmpegExe
     lib.ffmpeg = "ffmpeg.exe"
