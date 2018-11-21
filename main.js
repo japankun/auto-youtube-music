@@ -13,11 +13,11 @@ const youtubedlExpires = 7*24*60*60
 
 let lib = 
 {
-    'youtubedlUrl': "",
-    'youtubedl': "",
+    'youtubedlUrl': setting.youtubedlLinux,
+    'youtubedl': "youtube-dl",
     'ffmpegUrl': "",
-    'ffmpeg': "",
-    'ffprobe': ""
+    'ffmpeg': "ffmpeg",
+    'ffprobe': "ffprobe"
 }
 
 if (isWindows) {
@@ -26,13 +26,6 @@ if (isWindows) {
     lib.ffmepgUrl = setting.ffmpegExe
     lib.ffmpeg = "ffmpeg.exe"
     lib.ffprobe = "ffprobe.exe"
-
-} else {
-    lib.youtubedlUrl = setting.youtubedlLinux
-    lib.youtubedl = "youtube-dl"
-    lib.ffmpeg = "ffmpeg"
-    lib.ffprobe = "ffprobe"
-
 }
 
 let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false};
@@ -212,11 +205,6 @@ function commandlineOptions () {
             name: '-nc',
             description :'Skip library software update',
             example: "'main.js -nc {someYouTubeURL}'"
-        },
-        {
-            name: '-ff',
-            description :'check exists ffmpeg. for youtube-dl uses ffmpeg option',
-            example: "'main.js --ff {someYouTubeURL}'"
         },
         {
             name: '-h',
