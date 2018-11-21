@@ -114,6 +114,7 @@ function updateCheck () {
         wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
             setTimeout(download, 1000)
         })
+        fs.chmodSync('./lib/' + lib.youtubedl, '+x');
 
     } else {
         msg('Found ' + lib.youtubedl)
