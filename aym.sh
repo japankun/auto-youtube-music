@@ -6,3 +6,5 @@ if [-e /usr/bin/ffmpeg] -o [-e /usr/bin/ffprobe; then
 fi
 
 node main.js $@
+
+exit
