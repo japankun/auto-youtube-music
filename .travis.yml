@@ -17,4 +17,4 @@ before_install:
   - which ffmpeg
   - chmod +x ./aym.sh
 
-script: ./aym.sh https://www.youtube.com/watch?v=6Olt-ZtV_CE
+script: node main.js https://www.youtube.com/watch?v=6Olt-ZtV_CE
