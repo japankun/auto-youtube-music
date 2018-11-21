@@ -1,6 +1,6 @@
 {
-    "youtubedlExe": "https://yt-dl.org/downloads/latest/youtube-dl.exe",
-    "youtubedlLinux:": "https://yt-dl.org/downloads/latest/youtube-dl",
+    "ytDlExe": "https://yt-dl.org/downloads/latest/youtube-dl.exe",
+    "ytDlLinux": "https://yt-dl.org/downloads/latest/youtube-dl",
     "ffmpegExe": "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip",
     "renameOptions": "%(title)s-%(id)s.%(ext)s",
     "downloadQuality": "-f bestaudio",
