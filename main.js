@@ -21,14 +21,14 @@ let lib =
 }
 
 if (isWindows) {
-    lib.youtubedlUrl = setting.youtubedlExe.toString()
+    lib.youtubedlUrl = setting.youtubedlExe
     lib.youtubedl = "youtube-dl.exe"
     lib.ffmepgUrl = setting.ffmpegExe
     lib.ffmpeg = "ffmpeg.exe"
     lib.ffprobe = "ffprobe.exe"
 
 } else {
-    lib.youtubedlUrl = setting.youtubedlLinux.toString()
+    lib.youtubedlUrl = setting.youtubedlLinux
     lib.youtubedl = "youtube-dl"
     lib.ffmpeg = "ffmpeg"
     lib.ffprobe = "ffprobe"
@@ -186,7 +186,7 @@ function download () {
 
     downloadOptions.push(playlist)
 
-    let proc = childProcess.spawn(lib.youtubedl, downloadOptions,
+    let proc = childProcess.spawn(__dirname + '/lib/' + lib.youtubedl, downloadOptions,
         { cwd: __dirname + '/lib', stdio: 'inherit'}
     )
 
