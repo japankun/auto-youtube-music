@@ -143,7 +143,7 @@ function updateCheck () {
         msg('Missing ' + lib.youtubedl, 'yellow')
         msg('Downloading ' + lib.youtubedl + ' ...', 'blue')
         wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
-            setTimeout(download, 1000)
+            setTimeout(download, 2000)
         })
 
     } else {
@@ -155,7 +155,7 @@ function updateCheck () {
         if (parseInt(fs.statSync('./lib/' + lib.youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-youtubedlExpires) {
             msg(lib.youtubedl + ' is Too old. try update ' + lib.youtubedl + ' ...', 'yellow')
             wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
-                setTimeout(download, 1000)
+                setTimeout(download, 2000)
             })
         } else {
             msg(lib.youtubedl + ' is Fresh. using library ...', 'yellow')
