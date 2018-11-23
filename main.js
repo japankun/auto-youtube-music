@@ -6,9 +6,10 @@ const childProcess = require('child_process')
 const path = require('path')
 const wget = require('node-wget')
 const unzip = require('unzip')
+const request = require('request')
 
 const setting = require('./setting.json')
-const isWindows = (process.platform === 'win32');
+const isWindows = (process.platform === 'win32')
 const youtubedlExpires = 7*24*60*60
 
 let lib = 
@@ -28,9 +29,10 @@ if (isWindows) {
     lib.ffprobe = "ffprobe.exe"
 }
 
-let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false};
+let commandOptions = {'nc': false, 'ff': false, 'h':false, 'nm': false, 'q': false, 'v': false};
 let playlist = false;
 let modifyOptions = '';
+let queryString = '';
 
 (function(){
 
@@ -38,26 +40,55 @@ let modifyOptions = '';
         ' \u001b[41m \> \u001b[0m Auto You\u001b[41mTube\u001b[0m Music Downloader\n'+
         '\u001b[36m******************************************************************\u001b[0m\n')
 
-    process.argv.forEach(function(url){
+    process.argv.forEach(function(str){
 
-        if (url.substr(0, 4, url) === "http") {
-            playlist = url
+        if (str.substr(0, 4, str) === "http") {
+            playlist = str
 
-        } else if (url == "-h") {
+        } else if (str == "-h") {
             commandOptions.h = true
             commandlineOptions()
             process.exit()
 
-        } else if (url == "-nc") {
+        } else if (str == "-nc") {
             commandOptions.nc = true
 
-        } else if (url == "-nm") {
+        } else if (str == "-nm") {
             commandOptions.nm = true
+
+        } else if (str == "-q") {
+            commandOptions.q = true
+
+        } else if (commandOptions.q) {
+            commandOptions.q = str
+
+        } else if (str == "-v") {
+            commandOptions.v = true
+            
+        } else if (commandOptions.v) {
+            commandOptions.v = str
         }
         
         return false;
 
     })
+
+    if (commandOptions.q && 0 < commandOptions.q.length) {
+        msg('Search Mode - Keyword:' + commandOptions.q);
+        search(commandOptions.q)
+        return;
+    }
+
+    if (commandOptions.v && 0 < commandOptions.v.length) {
+
+        msg('Direct Download Mode')
+
+        if (commandOptions.v == '')
+            err('Missing videoId')
+
+        playlist = "http://www.youtube.com/watch?v=" + commandOptions.v
+
+    }
 
     if (!playlist) {
         error('Missing Donwload URL');
@@ -114,7 +145,6 @@ function updateCheck () {
         wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
             setTimeout(download, 1000)
         })
-        fs.chmodSync('./lib/' + lib.youtubedl, 0o755);
 
     } else {
         msg('Found ' + lib.youtubedl)
@@ -211,6 +241,16 @@ function commandlineOptions () {
             name: '-h',
             description :'this.',
             example: "'main.js -h'"
+        },
+        {
+            name: '-q',
+            description :'Cli video search mode',
+            example: "'main.js -q \"{keyword}\"'"
+        },
+        {
+            name: '-v',
+            description :'direct VideoId download mode',
+            example: "'main.js -v {VideoId}'"
         }
     ]
 
@@ -262,4 +302,26 @@ function msg (msg, color=null, head=true) {
 
 function error (err) {
     msg('[ERROR] ' + err, 'red')
+}
+
+function search (qStr) {
+
+    let options = {
+        url: 'https://www.googleapis.com/youtube/v3/search?type=video&part=snippet' +
+        '&maxResults=25&q=' + qStr + '&key=AIzaSyDgF9bO9NLLZRToopglOd9G8N5vbm46ZUg',
+        method: 'GET',
+        headers: [{'Content-Type':'application/json'}],
+        json: true
+    }
+
+    request(options, function (error, response, body) {
+
+        body.items.forEach (function (result) {
+            console.log(result.id.videoId + '\t'+ result.snippet.title+ '\t' + '')
+        })
+
+    })
+
+    return;
+
 }
