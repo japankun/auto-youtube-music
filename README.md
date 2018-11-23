@@ -14,9 +14,11 @@ youtube-dl front end for Specialized YouTube Music.
 
 ### install
 
+```
 git https://github.com/japankun/auto-youtube-music.git
 cd auto-youtube-music
 npm install
+```
 
 #### single track
 
