@@ -38,7 +38,7 @@ it limit of windows command prompt application.
 
 #### Search Mode
 
-a times, do not want to browse youtube search page. you can use this awesome option
+sometimes do not want to browse youtube search page. you can use this awesome option
 ```aym.bat -q "What A Wonderful World"
 
 ******************************************************************
