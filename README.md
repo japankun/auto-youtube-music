@@ -7,8 +7,8 @@ youtube-dl front end for Specialized YouTube Music.
 ## Features
 
 - Auto Update youtube-dl
-- Enhanced ffmpeg Options [Experimentally]
-- Delete movie, only save Music file
+- Enhanced ffmpeg Options [Experimental]
+- Delete movie, only save music file
 
 ## Usage
 
@@ -38,7 +38,8 @@ it limit of windows command prompt application.
 
 #### Search Mode
 
-sometimes do not want to browse youtube search page. you can use this awesome option
+sometimes do not want to browse youtube page. you can use this awesome option.
+it like a command-line youtube search, you can find videoId and MoviesTitle from any keywords
 ```aym.bat -q "What A Wonderful World"
 
 ******************************************************************
