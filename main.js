@@ -40,45 +40,16 @@ let queryString = '';
         ' \u001b[41m \> \u001b[0m Auto You\u001b[41mTube\u001b[0m Music Downloader\n'+
         '\u001b[36m******************************************************************\u001b[0m\n')
 
-    process.argv.forEach(function(str){
+    process.argv.forEach(argvHandler)
 
-        if (str.substr(0, 4, str) === "http") {
-            playlist = str
-
-        } else if (str == "-h") {
-            commandOptions.h = true
-            commandlineOptions()
-            process.exit()
-
-        } else if (str == "-nc") {
-            commandOptions.nc = true
-
-        } else if (str == "-nm") {
-            commandOptions.nm = true
-
-        } else if (str == "-q") {
-            commandOptions.q = true
-
-        } else if (commandOptions.q) {
-            commandOptions.q = str
-
-        } else if (str == "-v") {
-            commandOptions.v = true
-            
-        } else if (commandOptions.v) {
-            commandOptions.v = str
-        }
-        
-        return false;
-
-    })
-
+    // Search Mode
     if (commandOptions.q && 0 < commandOptions.q.length) {
         msg('Search Mode - Keyword:' + commandOptions.q);
         search(commandOptions.q)
         return;
     }
 
+    // Direct Download Mode
     if (commandOptions.v && 0 < commandOptions.v.length) {
 
         msg('Direct Download Mode')
@@ -96,6 +67,7 @@ let queryString = '';
     }
 
     msg('Download URL: ' + playlist);
+
     main()
 
 })();
@@ -144,26 +116,28 @@ function updateCheck () {
         msg('Downloading ' + lib.youtubedl + ' ...', 'blue')
         wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
             setTimeout(download, 1000)
-            fs.chmodSync('./lib/' + lib.youtubedl, 0o755);
+            fs.chmodSync('./lib/' + lib.youtubedl, 0o755)
         })
 
     } else {
+
         msg('Found ' + lib.youtubedl)
         msg('Checking update ' + lib.youtubedl + ' ...', 'yellow')
 
         let date = new Date()
 
+        // refresh youtube-dl 1 week
         if (parseInt(fs.statSync('./lib/' + lib.youtubedl).ctimeMs/1000) < parseInt(date.getTime/1000)-youtubedlExpires) {
             msg(lib.youtubedl + ' is Too old. try update ' + lib.youtubedl + ' ...', 'yellow')
             wget({"url":lib.youtubedlUrl, "dest": './lib/'}, function (data, err) {
                 setTimeout(download, 1000)
             })
+
         } else {
             msg(lib.youtubedl + ' is Fresh. using library ...', 'yellow')
             download()
-        }
 
-        return;
+        }
         
     }
 
@@ -171,17 +145,19 @@ function updateCheck () {
         return;
     }
 
+    msg('Checking ' + lib.ffmpeg + ' ...')
     if (!isExistsFile(lib.ffmpeg) || !isExistsFile(lib.ffprobe)) {
         msg('Not found ' + lib.fmpeg + ' or ' + lib.ffprobe, 'yellow')
         msg('Downloading ' + lib.ffmpeg + ' package ...', 'blue')
 
-        wget({"ur": lib.ffmepgUrl, "dest": './lib/'}, downloadFFmpeg)
-
+        wget({"ur": lib.ffmepgUrl, "dest": './lib/'}, function (data, err) {
+            setTimeout(downloadFFmpeg, 1000)
+        })
+        
     } else {
         msg('Found ' + lib.ffmpeg + ' & ' + lib.ffprobe)
-    }
 
-    return;
+    }
 
 }
 
@@ -195,6 +171,9 @@ function download () {
 
     msg('youtube-dl Options: ' + setting.downloadQuality)
 
+    // -x: extract audio with ffmpeg
+    // --audio-format best: 
+    // -o: output filepath
     let downloadOptions = [
         setting.downloadQuality,
         "-x",
@@ -209,6 +188,7 @@ function download () {
         downloadOptions.push('--no-mtime')
     }
 
+    // using local library ffmpeg
     if (!isWindows && setting.ffmpegPath) {
         downloadOptions.push("--ffmpeg-location")
         downloadOptions.push(__dirname +  setting.ffmpegPath)
@@ -216,18 +196,23 @@ function download () {
 
     downloadOptions.push(playlist)
 
+    // call youtube-dl
     let proc = childProcess.spawn(__dirname + '/lib/' + lib.youtubedl, downloadOptions,
         { cwd: __dirname + '/lib', stdio: 'inherit'}
     )
 
+    return;
+
 }
 
+// file: string, filepath
 function isExistsFile (file) {
-    if (fs.existsSync('./lib/' + file)) {
+
+    if (fs.existsSync('./lib/' + file))
         return true;
-    } else {
-        return false;
-    }
+
+    return false;
+
 }
 
 function commandlineOptions () {
@@ -271,6 +256,9 @@ function commandlineOptions () {
 
 }
 
+// msg: string, message
+// color: string, [black, red, green, yellow, blue, purple, cyan, white]
+// head: boolean, no print header text
 function msg (msg, color=null, head=true) {
 
     let msgHeader = ''
@@ -298,13 +286,18 @@ function msg (msg, color=null, head=true) {
     } else {
         console.log(pallet['green'] + msgHeader + msg + pallet['reset'])
     }
+
+    return 0;
     
 }
 
+// err: stirng, error message
 function error (err) {
     msg('[ERROR] ' + err, 'red')
+    return 0;
 }
 
+// qStr: string, search query string
 function search (qStr) {
 
     let options = {
@@ -323,6 +316,44 @@ function search (qStr) {
 
     })
 
-    return;
+    if (error) {
+        return false;
+    } else {
+        return true;
+    }
 
+}
+
+// str: string, splited space argument string
+function argvHandler (str) {
+
+    if (str.substr(0, 4, str) === "http") {
+        playlist = str
+
+    } else if (str == "-h") {
+        commandOptions.h = true
+        commandlineOptions()
+        process.exit()
+
+    } else if (str == "-nc") {
+        commandOptions.nc = true
+
+    } else if (str == "-nm") {
+        commandOptions.nm = true
+
+    } else if (str == "-q") {
+        commandOptions.q = true
+
+    } else if (commandOptions.q) {
+        commandOptions.q = str
+
+    } else if (str == "-v") {
+        commandOptions.v = true
+        
+    } else if (commandOptions.v) {
+        commandOptions.v = str
+    }
+    
+    return 0;
+    
 }
